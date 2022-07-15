@@ -1,0 +1,16 @@
+{
+  "name": "baboonz",
+  "version": "1.0.0",
+  "description": "build your squad around a treasury",
+  "main": "server/index.js",
+  "scripts": {
+    "client:install": "cd client && yarn",
+    "client": "cd client && yarn start",
+    "server": "node server",
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "start": "node server",
+    "heroku-postbuild": "cd client/ && yarn && yarn install --production && yarn build"
+  },
+  "author": "yanis_mezn",
+  "license": "ISC"
+}
