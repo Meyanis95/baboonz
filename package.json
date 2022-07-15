@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "build your squad around a treasury",
   "main": "server/index.js",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "client:install": "cd client && yarn",
     "client": "cd client && yarn start",

@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:8888",
+  "engines": {
+    "node": "16.x"
+  },
   "dependencies": {
     "@fontsource/inter": "^4.5.11",
     "@gnosis.pm/safe-core-sdk": "^2.1.0",
