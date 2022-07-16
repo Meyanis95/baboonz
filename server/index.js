@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js') 
  
-const PORT = 8888;
+const PORT = process.env.PORT || 88888;
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
 
