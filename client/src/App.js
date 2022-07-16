@@ -104,12 +104,11 @@ function App() {
     console.log("Verifying your account, with the following addres:", address);
     const addr = address;
     const options = {
-      url: "http://localhost:8888/signup",
       params: { data: addr },
     };
 
     const nonce = await axios
-      .request(options)
+      .get(`/signup`, options)
       .then(async function (response) {
         const { nonce } = response.data;
         return nonce;
@@ -123,11 +122,10 @@ function App() {
     console.log("Here it`s the signature", signature);
 
     const optionsverify = {
-      url: "http://localhost:8888/verify",
       params: { eth_address: addr, signature: signature, nonce: nonce },
     };
     const { user, token } = await axios
-      .request(optionsverify)
+      .get(`/verify`, optionsverify)
       .then(function (response) {
         return response.data;
       })

@@ -74,7 +74,6 @@ export default function Form({ signer }) {
 
   const createSafe = async (safeAddress, owners, threshold) => {
     const options = {
-      url: "http://localhost:8888/createSafe",
       params: {
         safeAddress: safeAddress,
         owners: owners,
@@ -82,7 +81,7 @@ export default function Form({ signer }) {
       },
     };
     await axios
-      .request(options)
+      .get(`/createSafe`, options)
       .then(function (response) {
         console.log(response.data);
         return response.data;
