@@ -8,10 +8,10 @@ import axios from "axios";
 import { useEffect } from "react";
 import { XCircleIcon } from "@heroicons/react/solid";
 
-export default function Form({ signer }) {
+export default function Form({ signer, address }) {
   const [ethAdapter, setEthAdapter] = useState(null);
   const [threshold, setThreshold] = useState();
-  const [members, setMembers] = useState([{ name: "", address: "" }]);
+  const [members, setMembers] = useState([{ name: "", address: address }]);
   let navigate = useNavigate();
 
   useEffect(() => {

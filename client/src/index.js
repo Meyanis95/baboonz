@@ -7,6 +7,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Safe from './views/Safe'
 import Safes from './views/Safes'
+import Landing from './views/Landing'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -17,6 +18,7 @@ root.render(
         <Route path="safes" element={<Safes />}>
           <Route path=":safeAddress" element={<Safe />} />
         </Route>
+        <Route path="/home" element={<Landing />}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
