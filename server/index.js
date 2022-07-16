@@ -15,12 +15,12 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 const app = express();
 app.use(cors())
 
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+// app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 
-app.get('/*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'build', '../client/build')).use(cors())
-});
+// app.get('/*', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, 'build', '../client/build'))
+// });
 
 app.get('/signup', async (req, res) => {
     const eth_address = req.query.data;
