@@ -5,10 +5,10 @@ import { useParams } from "react-router-dom";
 
 export default function Safe(props) {
   const [safeWallet, setSafeWallet] = useState();
-  const [contractAddress, setContractAddress] = useState();
+  //const [contractAddress, setContractAddress] = useState();
   const [owners, setOwners] = useState();
   const [numOwners, setNumOwners] = useState();
-  const [threshold, setThreshold] = useState();
+  //const [threshold, setThreshold] = useState();
 
   let params = useParams();
   const address = params.safeAddress;
@@ -78,6 +78,7 @@ export default function Safe(props) {
                     <a
                       href={`https://rinkeby.etherscan.io/address/${safeWallet.contract_address}`}
                       target="_blank"
+                      rel="noreferrer"
                     >
                       {safeWallet.contract_address}
                     </a>

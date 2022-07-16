@@ -24,6 +24,10 @@ export default function Form({ signer, address }) {
     }
   }, [signer]);
 
+  useEffect(() => {
+    setMembers([{ name: "", address: address }]);
+  }, [address]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const inputs = [...members];
@@ -104,7 +108,7 @@ export default function Form({ signer, address }) {
               This app is still in alpha
             </h3>
             <div className="mt-2 text-sm text-red-700">
-              <ul role="list" className="list-disc pl-5 space-y-1">
+              <ul className="list-disc pl-5 space-y-1">
                 <li>Use it only on testnets (Rinkeby, Goerli, ...)</li>
               </ul>
             </div>
