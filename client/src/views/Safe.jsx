@@ -15,15 +15,13 @@ export default function Safe(props) {
 
   const fetchSafe = async (address) => {
     const options = {
-      url: "http://localhost:8888/getSafe",
       params: {
         safeAddress: address,
       },
     };
     return await axios
-      .request(options)
+      .get(`/getSafe`, options)
       .then(function (response) {
-        console.log("la réponse de ma requête", response.data);
         return response.data;
       })
       .catch(function (error) {
@@ -34,10 +32,14 @@ export default function Safe(props) {
   useEffect(() => {
     const getData = async () => {
       let safe = await fetchSafe(address);
-      console.log("mon safe", safe.data[0]);
       setSafeWallet(safe.data[0]);
+
       let numOwners = safe.data[0].owners.length;
       setNumOwners(numOwners);
+
+      let owners = safe.data[0].owners;
+      setOwners(owners);
+
       return;
     };
     getData();
@@ -71,8 +73,15 @@ export default function Safe(props) {
                 <dt className="text-sm font-medium text-gray-500">
                   Smart contract address
                 </dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {safeWallet && safeWallet.contract_address}
+                <dd className="mt-1 text-sm text-blue-600 sm:mt-0 sm:col-span-2">
+                  {safeWallet && (
+                    <a
+                      href={`https://rinkeby.etherscan.io/address/${safeWallet.contract_address}`}
+                      target="_blank"
+                    >
+                      {safeWallet.contract_address}
+                    </a>
+                  )}
                 </dd>
               </div>
               <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -97,9 +106,12 @@ export default function Safe(props) {
                 </dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <ul>
-                    {safeWallet &&
-                      safeWallet.owners.map((element, index) => (
-                        <li key={index}>{element}</li>
+                    {owners &&
+                      owners.map((element, index) => (
+                        <li key={index}>
+                          {JSON.parse(element).name || `Member #${index + 1}`}:{" "}
+                          {JSON.parse(element).address}
+                        </li>
                       ))}
                   </ul>
                 </dd>

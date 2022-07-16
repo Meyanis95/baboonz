@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ReactComponent as Logo } from "../navlogo.svg";
 
 export default function Navbar({
   web3Modal,
@@ -12,7 +13,9 @@ export default function Navbar({
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Top">
         <div className="w-full py-6 flex items-center justify-between border-b border-indigo-500 lg:border-none">
           <div className="flex items-center text-white font-phosphate text-3xl">
-            <Link to={"/"}>BABOONZ</Link>
+            <Link to={"/"}>
+              <Logo height={40} width={150} />
+            </Link>
           </div>
           <div className="space-x-3">
             {web3Modal ? (

@@ -101,7 +101,7 @@ app.get('/createSafe', async (req, res) => {
   } else {
     var { data, error } = await supabase
     .from('safe_wallets')
-    .insert({contract_address: _data.safeAddress, threshold: _data.threshold, owners: _data.owners })
+    .insert({contract_address: _data.safeAddress, threshold: _data.threshold, owners: _data.members })
     
     if (error) {
       res.status(400).json({ error })

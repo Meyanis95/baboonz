@@ -15,6 +15,8 @@
     "@headlessui/react": "^1.6.5",
     "@heroicons/react": "^1.0.6",
     "@supabase/supabase-js": "^1.35.4",
+    "@tailwindcss/aspect-ratio": "^0.4.0",
+    "@tailwindcss/forms": "^0.5.2",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -37,8 +39,7 @@
     "tailwindcss": "^3.1.4",
     "url": "^0.11.0",
     "web-vitals": "^2.1.4",
-    "web3modal": "^1.9.8",
-    "@tailwindcss/forms": "^0.5.2"
+    "web3modal": "^1.9.8"
   },
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false react-app-rewired start",
