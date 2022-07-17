@@ -37,9 +37,8 @@ export default function Form({ signer, address }) {
         owners.push(addr.address);
       }
     });
-    const safeAddress = await deploySafe(owners, threshold);
+    let { data, error } = await deploySafe(owners, threshold);
     console.log("Owners of the multisig =>", owners);
-    navigate(`/safes/${safeAddress}`);
   };
 
   let handleChange = (i, e) => {
@@ -69,11 +68,11 @@ export default function Form({ signer, address }) {
       const newSafeAddress = safeSdk.getAddress();
       console.log(newSafeAddress);
       await createSafe(newSafeAddress, members, threshold);
+      navigate(`/safes/${newSafeAddress}`);
       return newSafeAddress;
     } catch (error) {
-      console.log(error);
       window.alert("oups something went wrong!", error);
-      return;
+      return error;
     }
   };
 
