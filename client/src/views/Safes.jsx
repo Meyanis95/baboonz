@@ -1,10 +1,8 @@
-import { Link, Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import { Outlet } from "react-router-dom";
 
 export default function Safes() {
   return (
     <div>
-      <Navbar />
       <Outlet />
     </div>
   );

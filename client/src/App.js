@@ -1,12 +1,17 @@
 import './App.css';
-import Form from './components/Form';
+import Home from './components/Home';
 import Navbar from './components/Navbar';
+import Safe from './views/Safe';
+import Landing from './views/Landing'
+import Safes from './views/Safes';
 import { useEffect, useState } from 'react';
 import axios from "axios";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { createClient } from "@supabase/supabase-js";
+import { Route, Routes } from 'react-router-dom';
+
 
 const INFURA_ID = "460f40a260564ac4a4f4b3fffb032dad";
 
@@ -21,6 +26,7 @@ function App() {
   const [injectedProvider, setInjectedProvider] = useState();
   const [connectedNetwork, setConnectedNetwork] = useState();
   const [web3Modal, setWeb3Modal] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     // initiate web3modal
@@ -63,28 +69,40 @@ function App() {
     const _address = await signer.getAddress();
     console.log("Connected user address => ", _address);
     setAddress(_address);
-    if (!localStorage.getItem("supa_token")) {
+    if (!localStorage.getItem("user_id")) {
       await signIn(_address, signer);
     }
-
-    return {
-      address: _address,
-      provider: provider,
-      status: "success",
-    };
+    setIsConnected(true)
   }
+
+  useEffect(() => {
+    if (injectedProvider) {
+      const changeNetwork = async () => {
+        const network = await injectedProvider.getNetwork();
+        setConnectedNetwork(network.name);  
+      }
+      // const changeAddress = async () => {
+      //   const signer = await injectedProvider.getSigner();
+      //   const address = await signer.getAddress();
+      //   setAddress(address) 
+      //   refreshId(address)
+      // }
+      changeNetwork();
+      //changeAddress();
+    }
+  }, [injectedProvider])
 
   const addListeners = (provider) => {
     provider.on("chainChanged", (chainId) => {
       console.log(`chain changed to ${chainId}! updating providers`);
       setInjectedProvider(new ethers.providers.Web3Provider(provider));
-      window.location.reload();
     });
 
     provider.on("accountsChanged", () => {
       console.log(`account changed!`);
       setInjectedProvider(new ethers.providers.Web3Provider(provider));
-      window.location.reload();
+      refreshId();
+      window.location.reload()
     });
 
     // Subscribe to session disconnection
@@ -92,26 +110,47 @@ function App() {
       console.log(code, reason);
       logoutOfWeb3Modal();
       localStorage.removeItem("supa_token");
+      localStorage.removeItem("user_id");
+      setIsConnected(false)
     });
   };
 
-  const checkUser = async () => {
-    const { data } = await supabase.from("users").select();
-    console.log(data);
-  };
+  // const checkUser = async () => {
+  //   const { data } = await supabase.from("users").select();
+  //   console.log(data);
+  // };
+
+  const refreshId = async (_address) => {
+    const options = {
+      params: { data: _address },
+    };
+    localStorage.removeItem('user_id')
+
+    const { id } = await axios
+      .get(`/signup`, options)
+      .then(async function (response) {
+        const { id } = response.data;
+        return { id };
+      })
+      .catch(function (error) {
+        console.log("erreur", error);
+      });
+
+    localStorage.setItem('user_id', id)
+    console.log("account changed, user id => ", id)
+  }
 
   const signIn = async (address, signer) => {
     console.log("Verifying your account, with the following addres:", address);
-    const addr = address;
     const options = {
-      params: { data: addr },
+      params: { data: address },
     };
 
-    const nonce = await axios
+    const { nonce, id } = await axios
       .get(`/signup`, options)
       .then(async function (response) {
-        const { nonce } = response.data;
-        return nonce;
+        const { nonce, id } = response.data;
+        return { nonce, id };
       })
       .catch(function (error) {
         console.log("erreur", error);
@@ -120,9 +159,10 @@ function App() {
     console.log("Sign the message with the nonce ...");
     const signature = await signer.signMessage(nonce);
     console.log("Here it`s the signature", signature);
+    localStorage.setItem('user_id', id)
 
     const optionsverify = {
-      params: { eth_address: addr, signature: signature, nonce: nonce },
+      params: { eth_address: address, signature: signature, nonce: nonce },
     };
     const { user, token } = await axios
       .get(`/verify`, optionsverify)
@@ -149,6 +189,7 @@ function App() {
       await injectedProvider.provider.disconnect();
     }
     localStorage.removeItem("supa_token");
+    localStorage.removeItem("user_id");
     setTimeout(() => {
       window.location.reload();
     }, 1);
@@ -163,20 +204,19 @@ function App() {
 
 
   return (
-    <>
-    <Navbar 
-            web3Modal = {web3Modal}
+      <Routes>
+        <Route path="/" element={<Navbar web3Modal = {web3Modal}
             address = {address}
             connectedNetwork = {connectedNetwork}
             logoutOfWeb3Modal = {logoutOfWeb3Modal}
-            connectWallet = {connectWallet}/>
-    <div>
-      <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <Form signer= {signer} address = {address}/>
-      </div>
-    </div>
-    </>
-  );
+            connectWallet = {connectWallet}/>}>
+        <Route index element={<Home  signer={signer} address={address} isConnected={isConnected}/>}/>
+        <Route path="safes" element={<Safes />}>
+          <Route path=":safeAddress" element={<Safe injectedProvider={injectedProvider} userAddress={address} />} />
+        </Route>
+        <Route path="/home" element={<Landing />}/>
+        </Route>
+      </Routes>)
 }
 
 export default App;

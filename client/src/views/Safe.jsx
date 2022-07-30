@@ -2,13 +2,16 @@ import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import SendEth from "../components/SendEth";
+import { ethers } from "ethers";
 
-export default function Safe(props) {
+export default function Safe({ injectedProvider, userAddress }) {
   const [safeWallet, setSafeWallet] = useState();
-  //const [contractAddress, setContractAddress] = useState();
   const [owners, setOwners] = useState();
   const [numOwners, setNumOwners] = useState();
-  //const [threshold, setThreshold] = useState();
+  const [showModal, setShowModal] = useState(false);
+  const [userBalanceInEth, setUserBalanceInEth] = useState();
+  const [userBalanceInUSD, setUserBalanceInUSD] = useState();
 
   let params = useParams();
   const address = params.safeAddress;
@@ -30,6 +33,16 @@ export default function Safe(props) {
   };
 
   useEffect(() => {
+    const getBalance = async () => {
+      if (injectedProvider && address) {
+        const balance = await injectedProvider.getBalance(userAddress);
+        console.log(ethers.utils.formatEther(balance));
+      }
+    };
+    getBalance();
+  }, [injectedProvider]);
+
+  useEffect(() => {
     const getData = async () => {
       let safe = await fetchSafe(address);
       setSafeWallet(safe.data[0]);
@@ -48,10 +61,14 @@ export default function Safe(props) {
   return (
     <>
       <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-10">
+        <button type="button" onClick={() => setShowModal(true)}>
+          SHOW MODAL
+        </button>
+        <SendEth showModal={showModal} setShowModal={setShowModal} />
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
             <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Your new squad
+              Your squad
             </h3>
             <p className="mt-1 max-w-2xl text-sm text-gray-500">
               Informations about your new squad

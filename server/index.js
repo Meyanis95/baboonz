@@ -14,9 +14,6 @@ const PORT = process.env.PORT || 8888;
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
 
-// const app = express();
-// app.use(cors())
-
 const app = express();
 
 // Priority serve any static files.
@@ -44,6 +41,8 @@ app.get('/signup', async (req, res) => {
 
     if (data.length > 0) {
       let {data, error} = await supabase.from('users').update({nonce}).match({eth_address: eth_address})
+      var id = data[0].id
+      console.log('id', id)
       console.log('data', data)
       console.log('error', error)
     } else {
@@ -55,7 +54,7 @@ app.get('/signup', async (req, res) => {
     if(error) {
       res.status(400).json({error: error.message})
     } else {
-      res.status(200).json({ nonce })
+      res.status(200).json({ nonce, id })
     }
 });
 
@@ -99,9 +98,9 @@ app.get('/createSafe', async (req, res) => {
   if (data.length > 0) {
     res.status(400).json({ error_message: 'contract exists' })
   } else {
-    var { data, error } = await supabase
+    let { data, error } = await supabase
     .from('safe_wallets')
-    .insert({contract_address: _data.safeAddress, threshold: _data.threshold, owners: _data.owners })
+    .insert({contract_address: _data.safeAddress, threshold: _data.threshold, owners: _data.owners, name: _data.name })
     
     if (error) {
       res.status(400).json({ error })
@@ -115,6 +114,20 @@ app.get('/createSafe', async (req, res) => {
   }
 });
 
+app.get('/linkSafe', async (req,res) => {
+  const _data = req.query
+
+  let { data, error } = await supabase
+  .from('user_safe')
+  .insert({ user: _data.userId, safe_id: _data.safeId})
+  
+  if (error) {
+    res.status(400).json({ error })
+  } else {
+    res.status(200).json({ data })
+  }
+})
+
 app.get('/getSafe', async (req, res) => {
   const _data = req.query;
   
@@ -122,6 +135,40 @@ app.get('/getSafe', async (req, res) => {
   .from('safe_wallets')
   .select()
   .eq('contract_address', _data.safeAddress)
+
+  if (error) {
+    res.status(400).json({ error })
+  } else {
+    res.status(200).json({ data })
+  }
+  
+});
+
+app.get('/getSafeById', async (req, res) => {
+  const _data = req.query;
+  
+  var { data, error } = await supabase
+  .from('safe_wallets')
+  .select()
+  .eq('id', _data.squadId)
+
+  if (error) {
+    res.status(400).json({ error })
+  } else {
+    res.status(200).json({ data })
+  }
+  
+});
+
+app.get('/checkSafe', async (req, res) => {
+  const _data = req.query;
+
+  const userId = _data.userId
+  
+  var { data, error } = await supabase
+  .from('user_safe')
+  .select()
+  .eq('user', userId)
 
   if (error) {
     res.status(400).json({ error })

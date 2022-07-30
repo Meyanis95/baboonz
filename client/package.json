@@ -2,7 +2,7 @@
   "name": "baboonz",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8888",
+  "proxy": "http://localhost:8888/",
   "engines": {
     "node": "16.x"
   },
@@ -31,7 +31,9 @@
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-app-rewired": "^2.2.1",
+    "react-blockies": "^1.4.1",
     "react-dom": "^18.2.0",
+    "react-loader-spinner": "^5.1.7-beta.1",
     "react-router-dom": "6",
     "react-scripts": "5.0.1",
     "stream-browserify": "^3.0.0",
