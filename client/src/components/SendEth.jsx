@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ethers } from "ethers";
 import axios from "axios";
+import { BeakerIcon } from "@heroicons/react/solid";
 
 export default function SendEth({
   showModal,
@@ -11,10 +12,8 @@ export default function SendEth({
   safeWalletAddress,
   signer,
 }) {
-  const [open, setOpen] = useState(false);
   const [ethAmount, setEthAmount] = useState(0);
   const [ethAmountInUSD, setEthAmountInUSD] = useState(0);
-  const [gasPrice, setGasPrice] = useState(0);
   const [gasPriceInGwei, setGasPriceInGwei] = useState(0);
   const [userBalanceInEth, setUserBalanceInEth] = useState(0);
   const [userBalanceInUSD, setUserBalanceInUSD] = useState(0);
@@ -22,32 +21,31 @@ export default function SendEth({
 
   const cancelButtonRef = useRef(null);
 
-  const fetchEthPrice = async () => {
-    if (userBalanceInEth) {
-      return await axios
-        .get(`/getEthPrice`)
-        .then(function (response) {
-          const { ethereum } = response.data.data;
-          let userBalance = ethereum.usd * userBalanceInEth;
-          setUserBalanceInUSD(userBalance);
-          setEthPrice(ethereum.usd);
-        })
-        .catch(function (error) {
-          console.log("erreur", error);
-        });
-    }
-  };
-
   useEffect(() => {
+    const fetchEthPrice = async () => {
+      if (userBalanceInEth) {
+        return await axios
+          .get(`/getEthPrice`)
+          .then(function (response) {
+            const { ethereum } = response.data.data;
+            let userBalance = ethereum.usd * userBalanceInEth;
+            setUserBalanceInUSD(userBalance);
+            setEthPrice(ethereum.usd);
+          })
+          .catch(function (error) {
+            console.log("erreur", error);
+          });
+      }
+    };
+
     fetchEthPrice();
   }, [userBalanceInEth]);
 
   useEffect(() => {
     const getGasPrice = async () => {
-      let gasPrice = await injectedProvider.getGasPrice();
-      setGasPriceInGwei(gasPrice);
+      var gasPrice = await injectedProvider.getGasPrice();
       gasPrice = ethers.utils.formatUnits(gasPrice, "gwei");
-      setGasPrice(gasPrice);
+      setGasPriceInGwei(gasPrice);
     };
 
     if (injectedProvider) {
@@ -64,7 +62,7 @@ export default function SendEth({
       }
     };
     getUserBalance();
-  }, [injectedProvider]);
+  }, [injectedProvider, userAddress]);
 
   const handleEthChange = (e) => {
     setEthAmount(e.target.value);
@@ -117,12 +115,21 @@ export default function SendEth({
             >
               <Dialog.Panel className="relative bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full sm:p-6">
                 <div>
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg pb-2 leading-6 font-medium text-gray-900 border-b border-gray-200"
-                  >
-                    Deposit ETH
-                  </Dialog.Title>
+                  <div className="flex justify-between border-b border-gray-200">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg pb-2 leading-6 font-medium text-gray-900"
+                    >
+                      Deposit ETH
+                    </Dialog.Title>
+                    <span className="mb-3 inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-indigo-600">
+                      <BeakerIcon
+                        className="-ml-0.5 mr-2 h-4 w-4"
+                        aria-hidden="true"
+                      />
+                      {gasPriceInGwei && gasPriceInGwei}
+                    </span>
+                  </div>
                   <div className="flex mt-3 sm:mt-5 justify-between">
                     <div className="mt-2 ">
                       <p className="text-sm text-slate-900">Your ETH Balance</p>

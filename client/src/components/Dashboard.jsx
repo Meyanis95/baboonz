@@ -10,26 +10,26 @@ export const myBlockies = (_seed) => (
 export default function Dashboard({ safes }) {
   const [squads, setSquads] = useState([]);
 
-  const getSquadInfos = async (squadId) => {
-    const options = {
-      params: {
-        squadId: squadId,
-      },
-    };
-    return await axios
-      .get(`/getSafeById`, options)
-      .then(function (response) {
-        const { data } = response;
-        if (data) {
-          return data;
-        }
-      })
-      .catch(function (error) {
-        console.log("erreur", error);
-      });
-  };
-
   useEffect(() => {
+    const getSquadInfos = async (squadId) => {
+      const options = {
+        params: {
+          squadId: squadId,
+        },
+      };
+      return await axios
+        .get(`/getSafeById`, options)
+        .then(function (response) {
+          const { data } = response;
+          if (data) {
+            return data;
+          }
+        })
+        .catch(function (error) {
+          console.log("erreur", error);
+        });
+    };
+
     if (safes && squads.length === 0) {
       const fetchAll = async () => {
         for (const safe of safes) {
@@ -45,7 +45,7 @@ export default function Dashboard({ safes }) {
       // });
       fetchAll();
     }
-  }, [safes]);
+  }, [safes, squads]);
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-10">

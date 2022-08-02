@@ -34,22 +34,22 @@ export default function Safe({ injectedProvider, userAddress, signer }) {
       });
   };
 
-  const fetchEthPrice = async () => {
-    if (contractBalanceInEth) {
-      return await axios
-        .get(`/getEthPrice`)
-        .then(function (response) {
-          const { ethereum } = response.data.data;
-          let constractBalance = ethereum.usd * contractBalanceInEth;
-          setContractBalanceInUSD(constractBalance);
-        })
-        .catch(function (error) {
-          console.log("erreur", error);
-        });
-    }
-  };
-
   useEffect(() => {
+    const fetchEthPrice = async () => {
+      if (contractBalanceInEth) {
+        return await axios
+          .get(`/getEthPrice`)
+          .then(function (response) {
+            const { ethereum } = response.data.data;
+            let constractBalance = ethereum.usd * contractBalanceInEth;
+            setContractBalanceInUSD(constractBalance);
+          })
+          .catch(function (error) {
+            console.log("erreur", error);
+          });
+      }
+    };
+
     fetchEthPrice();
   }, [contractBalanceInEth]);
 
@@ -61,7 +61,7 @@ export default function Safe({ injectedProvider, userAddress, signer }) {
       }
     };
     getContractBalance();
-  }, [injectedProvider]);
+  }, [injectedProvider, address]);
 
   useEffect(() => {
     const getData = async () => {

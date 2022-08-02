@@ -4,13 +4,11 @@ import {
   CloudUploadIcon,
   CogIcon,
   LockClosedIcon,
-  MenuIcon,
   RefreshIcon,
   ServerIcon,
   ShieldCheckIcon,
   XIcon,
 } from "@heroicons/react/outline";
-import { ChevronRightIcon, ExternalLinkIcon } from "@heroicons/react/solid";
 
 const features = [
   {
@@ -48,65 +46,6 @@ const features = [
     description:
       "Quia qui et est officia cupiditate qui consectetur. Ratione similique et impedit ea ipsum et.",
     icon: ServerIcon,
-  },
-];
-const blogPosts = [
-  {
-    id: 1,
-    title: "Boost your conversion rate",
-    href: "#",
-    date: "Mar 16, 2020",
-    datetime: "2020-03-16",
-    category: { name: "Article", href: "#" },
-    imageUrl:
-      "https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1679&q=80",
-    preview:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto accusantium praesentium eius, ut atque fuga culpa, similique sequi cum eos quis dolorum.",
-    author: {
-      name: "Roel Aufderehar",
-      imageUrl:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      href: "#",
-    },
-    readingLength: "6 min",
-  },
-  {
-    id: 2,
-    title: "How to use search engine optimization to drive sales",
-    href: "#",
-    date: "Mar 10, 2020",
-    datetime: "2020-03-10",
-    category: { name: "Video", href: "#" },
-    imageUrl:
-      "https://images.unsplash.com/photo-1547586696-ea22b4d4235d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1679&q=80",
-    preview:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit facilis asperiores porro quaerat doloribus, eveniet dolore. Adipisci tempora aut inventore optio animi., tempore temporibus quo laudantium.",
-    author: {
-      name: "Brenna Goyette",
-      imageUrl:
-        "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      href: "#",
-    },
-    readingLength: "4 min",
-  },
-  {
-    id: 3,
-    title: "Improve your customer experience",
-    href: "#",
-    date: "Feb 12, 2020",
-    datetime: "2020-02-12",
-    category: { name: "Case Study", href: "#" },
-    imageUrl:
-      "https://images.unsplash.com/photo-1492724441997-5dc865305da7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1679&q=80",
-    preview:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint harum rerum voluptatem quo recusandae magni placeat saepe molestiae, sed excepturi cumque corporis perferendis hic.",
-    author: {
-      name: "Daniela Metz",
-      imageUrl:
-        "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      href: "#",
-    },
-    readingLength: "11 min",
   },
 ];
 const footerNavigation = {
@@ -469,8 +408,7 @@ export default function Example() {
                 </p>
                 <div className="mt-8">
                   <div className="inline-flex rounded-md shadow">
-                    <a
-                      href="#"
+                    {/* <a
                       className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-gray-900 bg-white hover:bg-gray-50"
                     >
                       Visit the help center
@@ -478,7 +416,7 @@ export default function Example() {
                         className="-mr-1 ml-3 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                    </a>
+                    </a> */}
                   </div>
                 </div>
               </div>
@@ -520,7 +458,7 @@ export default function Example() {
                     <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
                       Solutions
                     </h3>
-                    <ul role="list" className="mt-4 space-y-4">
+                    <ul className="mt-4 space-y-4">
                       {footerNavigation.solutions.map((item) => (
                         <li key={item.name}>
                           <a
@@ -537,7 +475,7 @@ export default function Example() {
                     <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
                       Support
                     </h3>
-                    <ul role="list" className="mt-4 space-y-4">
+                    <ul className="mt-4 space-y-4">
                       {footerNavigation.support.map((item) => (
                         <li key={item.name}>
                           <a
@@ -556,7 +494,7 @@ export default function Example() {
                     <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
                       Company
                     </h3>
-                    <ul role="list" className="mt-4 space-y-4">
+                    <ul className="mt-4 space-y-4">
                       {footerNavigation.company.map((item) => (
                         <li key={item.name}>
                           <a
@@ -573,7 +511,7 @@ export default function Example() {
                     <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
                       Legal
                     </h3>
-                    <ul role="list" className="mt-4 space-y-4">
+                    <ul className="mt-4 space-y-4">
                       {footerNavigation.legal.map((item) => (
                         <li key={item.name}>
                           <a

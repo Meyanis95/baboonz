@@ -9,26 +9,26 @@ function Home({ signer, address, isConnected }) {
   const userId = localStorage.getItem("user_id");
   const [safes, SetSafes] = useState();
 
-  const userHaveSafe = async () => {
-    const options = {
-      params: {
-        userId: userId,
-      },
-    };
-    return await axios
-      .get(`/checkSafe`, options)
-      .then(function (response) {
-        const { data } = response;
-        if (data.length > 0) {
-          return data;
-        }
-      })
-      .catch(function (error) {
-        console.log("erreur", error);
-      });
-  };
-
   useEffect(() => {
+    const userHaveSafe = async () => {
+      const options = {
+        params: {
+          userId: userId,
+        },
+      };
+      return await axios
+        .get(`/checkSafe`, options)
+        .then(function (response) {
+          const { data } = response;
+          if (data.length > 0) {
+            return data;
+          }
+        })
+        .catch(function (error) {
+          console.log("erreur", error);
+        });
+    };
+
     if (userId) {
       const checkUser = async () => {
         let rep = await userHaveSafe();
