@@ -101,7 +101,6 @@ function App() {
     provider.on("accountsChanged", () => {
       console.log(`account changed!`);
       setInjectedProvider(new ethers.providers.Web3Provider(provider));
-      refreshId();
       window.location.reload()
     });
 
@@ -120,25 +119,26 @@ function App() {
   //   console.log(data);
   // };
 
-  const refreshId = async (_address) => {
-    const options = {
-      params: { data: _address },
-    };
-    localStorage.removeItem('user_id')
+  //This function is not necessary for the moment as we reload the dom when the user is changing account
+  // const refreshId = async (_address) => {
+  //   const options = {
+  //     params: { data: _address },
+  //   };
+  //   localStorage.removeItem('user_id')
 
-    const { id } = await axios
-      .get(`/signup`, options)
-      .then(async function (response) {
-        const { id } = response.data;
-        return { id };
-      })
-      .catch(function (error) {
-        console.log("erreur", error);
-      });
+  //   const { id } = await axios
+  //     .get(`/signup`, options)
+  //     .then(async function (response) {
+  //       const { id } = response.data;
+  //       return { id };
+  //     })
+  //     .catch(function (error) {
+  //       console.log("erreur", error);
+  //     });
 
-    localStorage.setItem('user_id', id)
-    console.log("account changed, user id => ", id)
-  }
+  //   localStorage.setItem('user_id', id)
+  //   console.log("account changed, user id => ", id)
+  // }
 
   const signIn = async (address, signer) => {
     console.log("Verifying your account, with the following addres:", address);
@@ -212,9 +212,9 @@ function App() {
             connectWallet = {connectWallet}/>}>
         <Route index element={<Home  signer={signer} address={address} isConnected={isConnected}/>}/>
         <Route path="safes" element={<Safes />}>
-          <Route path=":safeAddress" element={<Safe injectedProvider={injectedProvider} userAddress={address} />} />
+          <Route path=":safeAddress" element={<Safe injectedProvider={injectedProvider} userAddress={address} signer={signer}/>} />
         </Route>
-        <Route path="/home" element={<Landing />}/>
+        <Route path="/landing" element={<Landing />}/>
         </Route>
       </Routes>)
 }

@@ -9,10 +9,12 @@ const path = require('path');
 const history = require('history');
 const cookieParser = require('cookie-parser');
 const { createClient } = require('@supabase/supabase-js') 
+const CoinGecko = require('coingecko-api');
  
 const PORT = process.env.PORT || 8888;
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
+const CoinGeckoClient = new CoinGecko();
 
 const app = express();
 
@@ -151,11 +153,13 @@ app.get('/getSafeById', async (req, res) => {
   .from('safe_wallets')
   .select()
   .eq('id', _data.squadId)
+  .single()
 
   if (error) {
     res.status(400).json({ error })
   } else {
-    res.status(200).json({ data })
+    console.log(data)
+    res.status(200).json(data)
   }
   
 });
@@ -173,10 +177,24 @@ app.get('/checkSafe', async (req, res) => {
   if (error) {
     res.status(400).json({ error })
   } else {
-    res.status(200).json({ data })
+    res.status(200).json(data)
   }
   
 });
+
+app.get('/getEthPrice', async (req, res) => {
+  const { data, error } = await CoinGeckoClient.simple.price({
+      ids: ['ethereum', 'matic-network'],
+      vs_currencies: ['eur', 'usd'],
+  });
+  
+  if (error) {
+    res.status(400).json({ error: error.message })
+  } else {
+    res.status(200).json({ data })
+  }
+
+})
 
 app.listen(PORT, () => {
   console.log(`serveur démarré : https://localhost:${PORT}`)

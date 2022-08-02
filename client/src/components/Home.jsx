@@ -18,8 +18,7 @@ function Home({ signer, address, isConnected }) {
     return await axios
       .get(`/checkSafe`, options)
       .then(function (response) {
-        console.log("reponde de checkSafe", response);
-        const { data } = response.data;
+        const { data } = response;
         if (data.length > 0) {
           return data;
         }
