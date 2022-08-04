@@ -2,21 +2,71 @@ import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import SendEth from "../components/SendEth";
+import DepositEth from "../components/DepositEth";
 import { ethers } from "ethers";
 import { Link } from "react-router-dom";
+import EthersAdapter from "@gnosis.pm/safe-ethers-lib";
+import Safe from "@gnosis.pm/safe-core-sdk";
+import SafeServiceClient from "@gnosis.pm/safe-service-client";
+import PendingTx from "../components/PendingTx";
+import { ArrowLeftIcon } from "@heroicons/react/outline";
+import SendEth from "../components/SendEth";
 
-export default function Safe({ injectedProvider, userAddress, signer }) {
+export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
   const [safeWallet, setSafeWallet] = useState();
   const [safeWalletAddress, setSafeWalletAddress] = useState();
   const [owners, setOwners] = useState();
   const [numOwners, setNumOwners] = useState();
   const [showModal, setShowModal] = useState(false);
+  const [showSendEthModal, setShowSendEthModal] = useState(false);
+  const [safeSdk, setSafeSdk] = useState();
+  const [safeService, setSafeService] = useState();
   const [contractBalanceInUSD, setContractBalanceInUSD] = useState(0);
   const [contractBalanceInEth, setContractBalanceInEth] = useState(0);
+  const [pendingTx, setPendingTx] = useState();
+  const [chainId, setChainId] = useState();
 
   let params = useParams();
   const address = params.safeAddress;
+
+  useEffect(() => {
+    if (signer && safeWalletAddress) {
+      const setSafe = async () => {
+        const ethAdapter = new EthersAdapter({
+          ethers,
+          signer: signer,
+        });
+        const safeSdk = await Safe.create({ ethAdapter, safeWalletAddress });
+        setSafeSdk(safeSdk);
+
+        const txServiceUrl = "https://safe-transaction.goerli.gnosis.io";
+        const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter });
+        setSafeService(safeService);
+      };
+
+      const setChainId = async () => {
+        const chain_id = await signer.getChainId();
+        setChainId(chain_id);
+      };
+
+      setSafe();
+      setChainId();
+    }
+  }, [signer, safeWalletAddress]);
+
+  useEffect(() => {
+    const getPending = async () => {
+      const pendingTxs = await safeService.getPendingTransactions(
+        safeWalletAddress
+      );
+      console.log(pendingTxs);
+      setPendingTx(pendingTxs.results);
+    };
+
+    if (safeService && safeWallet) {
+      getPending();
+    }
+  }, [safeService]);
 
   const fetchSafe = async (address) => {
     const options = {
@@ -83,10 +133,24 @@ export default function Safe({ injectedProvider, userAddress, signer }) {
   return (
     <>
       <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-10">
-        <div className="mb-2 text-md text-gray-500">
+        <div className="flex mb-2 text-md text-gray-500 items-center">
+          <ArrowLeftIcon className="h-4 w-4 mr-1" />{" "}
           <Link to={"/"}>Go back to dashboard</Link>
         </div>
-        <SendEth
+        {safeSdk && safeService && (
+          <SendEth
+            showSendEthModal={showSendEthModal}
+            setShowSendEthModal={setShowSendEthModal}
+            contractBalanceInEth={contractBalanceInEth}
+            contractBalanceInUSD={contractBalanceInUSD}
+            safeSdk={safeSdk}
+            safeService={safeService}
+            userAddress={userAddress}
+            safeWalletAddress={safeWalletAddress}
+            chainId={chainId}
+          />
+        )}
+        <DepositEth
           showModal={showModal}
           setShowModal={setShowModal}
           userAddress={userAddress}
@@ -101,16 +165,27 @@ export default function Safe({ injectedProvider, userAddress, signer }) {
                 Your squad
               </h3>
               <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                Informations about your new squad
+                Informations about your squad
               </p>
             </div>
-            <button
-              type="button"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              onClick={() => setShowModal(true)}
-            >
-              Deposit fund
-            </button>
+            <div className="space-x-3">
+              <button
+                type="button"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                onClick={() => setShowModal(true)}
+              >
+                Deposit fund in contract
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                onClick={() => {
+                  setShowSendEthModal(true);
+                }}
+              >
+                Create a transaction
+              </button>
+            </div>
           </div>
           <div className="border-t border-gray-200">
             <dl>
@@ -191,6 +266,19 @@ export default function Safe({ injectedProvider, userAddress, signer }) {
             </dl>
           </div>
         </div>
+        {pendingTx &&
+          safeSdk &&
+          safeService &&
+          pendingTx.map((element, index) => (
+            <PendingTx
+              pendingTx={element}
+              numOwners={numOwners}
+              userAddress={userAddress}
+              key={index}
+              safeSdk={safeSdk}
+              safeService={safeService}
+            />
+          ))}
       </div>
     </>
   );

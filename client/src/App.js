@@ -1,9 +1,10 @@
 import './App.css';
 import Home from './components/Home';
 import Navbar from './components/Navbar';
-import Safe from './views/Safe';
+import SafeDisplay from './views/SafeDisplay';
 import Landing from './views/Landing'
 import Safes from './views/Safes';
+import Form from './components/Form';
 import { useEffect, useState } from 'react';
 import axios from "axios";
 import { ethers } from "ethers";
@@ -101,7 +102,8 @@ function App() {
     provider.on("accountsChanged", () => {
       console.log(`account changed!`);
       setInjectedProvider(new ethers.providers.Web3Provider(provider));
-      window.location.reload()
+      localStorage.removeItem("user_id");
+      window.location.reload();
     });
 
     // Subscribe to session disconnection
@@ -212,9 +214,10 @@ function App() {
             connectWallet = {connectWallet}/>}>
         <Route index element={<Home  signer={signer} address={address} isConnected={isConnected}/>}/>
         <Route path="safes" element={<Safes />}>
-          <Route path=":safeAddress" element={<Safe injectedProvider={injectedProvider} userAddress={address} signer={signer}/>} />
+          <Route path=":safeAddress" element={<SafeDisplay injectedProvider={injectedProvider} userAddress={address} signer={signer}/>} />
         </Route>
         <Route path="/landing" element={<Landing />}/>
+        <Route path="/form" element={<Form signer={signer} address={address}/>}/>
         </Route>
       </Routes>)
 }

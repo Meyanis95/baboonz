@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Blockies from "react-blockies";
 import { Link } from "react-router-dom";
+import { PlusSmIcon } from "@heroicons/react/solid";
 
 export const myBlockies = (_seed) => (
   <Blockies seed={_seed} size={10} scale={3} />
@@ -54,7 +55,7 @@ export default function Dashboard({ safes }) {
           [...squads].map((element, index) => (
             <li
               key={index}
-              className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
+              className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200 hover:shadow-md"
             >
               <Link to={`/safes/${element?.contract_address}`}>
                 <div className="w-full flex items-center justify-between p-6 space-x-6">
@@ -83,6 +84,19 @@ export default function Dashboard({ safes }) {
               </Link>
             </li>
           ))}
+        <li className="col-span-1 items-center content-center bg-white rounded-lg shadow divide-y divide-gray-200 hover:shadow-md">
+          <Link to={`/form`}>
+            <div className="w-full h-full flex items-center justify-between p-6 space-x-6">
+              <div className="flex items-center space-x-3">
+                <PlusSmIcon
+                  className="h-10 w-10 bg-slate-900 text-white rounded-full"
+                  aria-hidden="true"
+                />
+              </div>
+              <div className="flex-1 truncate">Create a new squad</div>
+            </div>
+          </Link>
+        </li>
       </ul>
     </div>
   );

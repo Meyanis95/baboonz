@@ -13,10 +13,9 @@ import Loader from "./Loader";
 const Form = ({ signer, address }) => {
   const [ethAdapter, setEthAdapter] = useState(null);
   const [threshold, setThreshold] = useState();
-  const [name, setName] = useState();
+  const [name, setName] = useState("");
   const [members, setMembers] = useState([{ name: "", address: address }]);
   const [loading, setLoading] = useState(false);
-  //const [safeId, setSafeId] = useState();
   let navigate = useNavigate();
   const userId = localStorage.getItem("user_id");
 

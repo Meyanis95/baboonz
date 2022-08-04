@@ -4,122 +4,91 @@ import { ethers } from "ethers";
 import axios from "axios";
 import { BeakerIcon } from "@heroicons/react/solid";
 
-export const EIP712_SAFE_TX_TYPE = {
-  // "SafeTx(address to,uint256 value,bytes data,uint8 operation,uint256 safeTxGas,uint256 baseGas,uint256 gasPrice,address gasToken,address refundReceiver,uint256 nonce)"
-  SafeTx: [
-    { type: "address", name: "to" },
-    { type: "uint256", name: "value" },
-    { type: "bytes", name: "data" },
-    { type: "uint8", name: "operation" },
-    { type: "uint256", name: "safeTxGas" },
-    { type: "uint256", name: "baseGas" },
-    { type: "uint256", name: "gasPrice" },
-    { type: "address", name: "gasToken" },
-    { type: "address", name: "refundReceiver" },
-    { type: "uint256", name: "nonce" },
-  ],
-};
-
-export default function SendEth({
-  showSendEthModal,
-  setShowSendEthModal,
+export default function DepositEth({
+  showModal,
+  setShowModal,
   userAddress,
+  injectedProvider,
   safeWalletAddress,
-  contractBalanceInEth,
-  contractBalanceInUSD,
-  safeSdk,
-  safeService,
-  chainId,
+  signer,
 }) {
   const [ethAmount, setEthAmount] = useState(0);
   const [ethAmountInUSD, setEthAmountInUSD] = useState(0);
+  const [gasPriceInGwei, setGasPriceInGwei] = useState(0);
+  const [userBalanceInEth, setUserBalanceInEth] = useState(0);
+  const [userBalanceInUSD, setUserBalanceInUSD] = useState(0);
   const [ethPrice, setEthPrice] = useState(0);
-  const [recipientAddress, setRecipientAddress] = useState(0);
-  const [nonce, setNonce] = useState(0);
 
   const cancelButtonRef = useRef(null);
 
   useEffect(() => {
     const fetchEthPrice = async () => {
-      return await axios
-        .get(`/getEthPrice`)
-        .then(function (response) {
-          const { ethereum } = response.data.data;
-
-          setEthPrice(ethereum.usd);
-        })
-        .catch(function (error) {
-          console.log("erreur", error);
-        });
+      if (userBalanceInEth) {
+        return await axios
+          .get(`/getEthPrice`)
+          .then(function (response) {
+            const { ethereum } = response.data.data;
+            let userBalance = ethereum.usd * userBalanceInEth;
+            setUserBalanceInUSD(userBalance);
+            setEthPrice(ethereum.usd);
+          })
+          .catch(function (error) {
+            console.log("erreur", error);
+          });
+      }
     };
 
     fetchEthPrice();
-  }, []);
+  }, [userBalanceInEth]);
 
   useEffect(() => {
-    const getNonce = async () => {
-      const nonce = await safeSdk.getNonce();
-      setNonce(nonce + 1);
+    const getGasPrice = async () => {
+      var gasPrice = await injectedProvider.getGasPrice();
+      gasPrice = ethers.utils.formatUnits(gasPrice, "gwei");
+      setGasPriceInGwei(parseInt(gasPrice).toFixed());
     };
-    getNonce();
-  }, [safeSdk]);
+
+    if (injectedProvider) {
+      getGasPrice();
+    }
+  }, [injectedProvider]);
+
+  useEffect(() => {
+    const getUserBalance = async () => {
+      if (injectedProvider && userAddress) {
+        let balance = await injectedProvider.getBalance(userAddress);
+        balance = ethers.utils.formatEther(balance);
+        setUserBalanceInEth(balance);
+      }
+    };
+    getUserBalance();
+  }, [injectedProvider, userAddress]);
 
   const handleEthChange = (e) => {
-    setEthAmount(ethers.utils.parseEther(e.target.value).toString());
+    setEthAmount(e.target.value);
     setEthAmountInUSD(parseFloat(e.target.value) * ethPrice);
   };
 
-  const createTransaction = async () => {
-    const transaction = {
-      to: recipientAddress,
-      value: ethAmount,
-      data: "0x",
-      nonce: nonce,
+  const sendEth = async () => {
+    const tx = {
+      // from: userAddress,
+      to: safeWalletAddress,
+      value: ethers.utils.parseEther(ethAmount),
+      // nonce: await injectedProvider.getTransactionCount(userAddress),
+      // gasLimit: ethers.utils.hexlify(10000), // 100000
+      // gasPrice: gasPriceInGwei,
     };
-    try {
-      const safeTransaction = await safeSdk.createTransaction(transaction);
-      //const safeTxHash = await safeSdk.getTransactionHash(safeTransaction);
-      console.log(safeTransaction);
-      const _safeTxHash = (safe, safeTx, chainId) => {
-        return ethers.utils._TypedDataEncoder.hash(
-          { verifyingContract: safe.address, chainId },
-          EIP712_SAFE_TX_TYPE,
-          safeTx
-        );
-      };
-      const safeTxHash = _safeTxHash(
-        {
-          address: safeWalletAddress,
-        },
-        safeTransaction.data,
-        chainId
-      );
-      const senderSignature = await safeSdk.signTransactionHash(safeTxHash);
-      const safeAddress = safeWalletAddress;
-      const senderAddress = userAddress;
-      const transactionConfig = {
-        safeAddress,
-        safeTxHash,
-        safeTransactionData: safeTransaction.data,
-        senderAddress,
-        senderSignature: senderSignature.data,
-      };
-      console.log("transaction config: ", transactionConfig);
-      const result = await safeService.proposeTransaction(transactionConfig);
-      console.log(result);
-    } catch (error) {
-      console.log(error);
-      window.alert(error.message);
-    }
+    const lele = await signer.sendTransaction(tx);
+    console.log(lele);
   };
 
   return (
-    <Transition.Root show={showSendEthModal} as={Fragment}>
+    <Transition.Root show={showModal} as={Fragment}>
       <Dialog
         as="div"
         className="relative z-10"
         initialFocus={cancelButtonRef}
-        onClose={setShowSendEthModal}
+        onClose={setShowModal}
       >
         <Transition.Child
           as={Fragment}
@@ -151,26 +120,31 @@ export default function SendEth({
                       as="h3"
                       className="text-lg pb-2 leading-6 font-medium text-gray-900"
                     >
-                      Create a transaction
+                      Deposit ETH
                     </Dialog.Title>
+                    <span className="mb-3 inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-indigo-600">
+                      <BeakerIcon
+                        className="-ml-0.5 mr-2 h-4 w-4"
+                        aria-hidden="true"
+                      />
+                      {gasPriceInGwei && gasPriceInGwei}
+                    </span>
                   </div>
                   <div className="flex mt-3 sm:mt-5 justify-between">
                     <div className="mt-2 ">
-                      <p className="text-sm text-slate-900">
-                        ETH Contract Balance
-                      </p>
+                      <p className="text-sm text-slate-900">Your ETH Balance</p>
                     </div>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        {contractBalanceInEth &&
-                          parseFloat(contractBalanceInEth).toFixed(4)}{" "}
+                        {userBalanceInEth &&
+                          parseFloat(userBalanceInEth).toFixed(2)}{" "}
                         ETH
                       </p>
                     </div>
                   </div>
                   <div className="mt-1 text-right">
                     <p className="text-sm text-gray-500">
-                      {contractBalanceInUSD?.toFixed(2)}$
+                      {userBalanceInUSD?.toFixed(2)}$
                     </p>
                   </div>
                   <div className="mt-5">
@@ -178,7 +152,7 @@ export default function SendEth({
                       htmlFor="price"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Choose amount to send
+                      Deposit to your squad treasury
                     </label>
                     <div className="mt-1 relative rounded-md shadow-sm">
                       <input
@@ -207,42 +181,19 @@ export default function SendEth({
                       {ethAmountInUSD ? ethAmountInUSD.toFixed(2) : "-- "} $
                     </p>
                   </div>
-                  <div className="mt-5">
-                    <label
-                      htmlFor="price"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Recipient address
-                    </label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                      <input
-                        type="text"
-                        name="price"
-                        id="price"
-                        className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md"
-                        placeholder="0x..."
-                        aria-describedby="price-currency"
-                        onChange={(e) => {
-                          setRecipientAddress(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </div>
                 </div>
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
                   <button
                     type="button"
                     className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
-                    onClick={() => {
-                      createTransaction();
-                    }}
+                    onClick={() => sendEth()}
                   >
-                    Create transaction
+                    Deposit
                   </button>
                   <button
                     type="button"
                     className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-                    onClick={() => setShowSendEthModal(false)}
+                    onClick={() => setShowModal(false)}
                     ref={cancelButtonRef}
                   >
                     Cancel
