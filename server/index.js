@@ -41,19 +41,19 @@ app.get('/signup', async (req, res) => {
       .select('nonce')
       .eq('eth_address', eth_address)
 
-      console.log(data)
+    console.log(data)
 
-    // if (data.length > 0) {
-    //   let {data, error} = await supabase.from('users').update({nonce}).match({eth_address: eth_address})
-    //   var id = data[0].id
-    //   console.log('id', id)
-    //   console.log('data', data)
-    //   console.log('error', error)
-    // } else {
-    //   let {data, error} = await supabase.from('users').insert({nonce, eth_address})
-    //   console.log('data', data)
-    //   console.log('error', error)
-    // }
+    if (data.length > 0) {
+      let {data, error} = await supabase.from('users').update({nonce}).match({eth_address: eth_address})
+      var id = data[0].id
+      console.log('id', id)
+      console.log('data', data)
+      console.log('error', error)
+    } else {
+      let {data, error} = await supabase.from('users').insert({nonce, eth_address})
+      console.log('data', data)
+      console.log('error', error)
+    }
   
     if(error) {
       res.status(400).json({error: error.message})
