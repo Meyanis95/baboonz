@@ -123,7 +123,7 @@ app.get('/linkSafe', async (req,res) => {
 
   let { data, error } = await supabase
   .from('user_safe')
-  .insert({ user: _data.userId, safe_id: _data.safeId})
+  .insert({ user_address: _data.userAddress, safe_id: _data.safeId})
   
   if (error) {
     res.status(400).json({ error })
@@ -169,12 +169,12 @@ app.get('/getSafeById', async (req, res) => {
 app.get('/checkSafe', async (req, res) => {
   const _data = req.query;
 
-  const userId = _data.userId
+  const user_address = _data.userAddress
   
   var { data, error } = await supabase
   .from('user_safe')
   .select()
-  .eq('user', userId)
+  .eq('user_address', user_address)
 
   if (error) {
     res.status(400).json({ error })
