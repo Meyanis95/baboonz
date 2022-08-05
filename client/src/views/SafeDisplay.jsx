@@ -24,7 +24,7 @@ export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
   const [contractBalanceInUSD, setContractBalanceInUSD] = useState(0);
   const [contractBalanceInEth, setContractBalanceInEth] = useState(0);
   const [pendingTx, setPendingTx] = useState();
-  const [chainId, setChainId] = useState();
+  const [nonce, setNonce] = useState(0);
 
   let params = useParams();
   const address = params.safeAddress;
@@ -39,20 +39,25 @@ export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
         const safeSdk = await Safe.create({ ethAdapter, safeWalletAddress });
         setSafeSdk(safeSdk);
 
-        const txServiceUrl = "https://safe-transaction.goerli.gnosis.io";
+        const txServiceUrl = "https://safe-transaction.rinkeby.gnosis.io";
         const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter });
         setSafeService(safeService);
       };
 
-      const setChainId = async () => {
-        const chain_id = await signer.getChainId();
-        setChainId(chain_id);
-      };
-
       setSafe();
-      setChainId();
     }
   }, [signer, safeWalletAddress]);
+
+  useEffect(() => {
+    const getInfo = async () => {
+      const safe_info = await safeService.getSafeInfo(safeWalletAddress);
+      setNonce(safe_info.nonce);
+    };
+
+    if (safeService && safeWalletAddress) {
+      getInfo().catch(console.error);
+    }
+  }, [safeService, safeWalletAddress]);
 
   useEffect(() => {
     const getPending = async () => {
@@ -137,7 +142,7 @@ export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
           <ArrowLeftIcon className="h-4 w-4 mr-1" />{" "}
           <Link to={"/"}>Go back to dashboard</Link>
         </div>
-        {safeSdk && safeService && (
+        {safeSdk && safeService && signer && (
           <SendEth
             showSendEthModal={showSendEthModal}
             setShowSendEthModal={setShowSendEthModal}
@@ -147,7 +152,8 @@ export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
             safeService={safeService}
             userAddress={userAddress}
             safeWalletAddress={safeWalletAddress}
-            chainId={chainId}
+            signer={signer}
+            nonce={nonce}
           />
         )}
         <DepositEth

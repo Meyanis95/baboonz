@@ -29,13 +29,14 @@ export default function SendEth({
   contractBalanceInUSD,
   safeSdk,
   safeService,
-  chainId,
+  signer,
+  nonce,
 }) {
   const [ethAmount, setEthAmount] = useState(0);
   const [ethAmountInUSD, setEthAmountInUSD] = useState(0);
   const [ethPrice, setEthPrice] = useState(0);
   const [recipientAddress, setRecipientAddress] = useState(0);
-  const [nonce, setNonce] = useState(0);
+  const [chainId, setChainId] = useState();
 
   const cancelButtonRef = useRef(null);
 
@@ -57,12 +58,15 @@ export default function SendEth({
   }, []);
 
   useEffect(() => {
-    const getNonce = async () => {
-      const nonce = await safeSdk.getNonce();
-      setNonce(nonce + 1);
+    const setChainIds = async () => {
+      const chain_id = await signer.getChainId();
+      setChainId(chain_id);
+      console.log("Chain id: ", chain_id);
     };
-    getNonce();
-  }, [safeSdk]);
+    if (signer) {
+      setChainIds();
+    }
+  }, [signer]);
 
   const handleEthChange = (e) => {
     setEthAmount(ethers.utils.parseEther(e.target.value).toString());
@@ -73,9 +77,10 @@ export default function SendEth({
     const transaction = {
       to: recipientAddress,
       value: ethAmount,
-      data: "0x",
+      data: "0x0000000000000000000000000000000000000000",
       nonce: nonce,
     };
+    console.log(transaction);
     try {
       const safeTransaction = await safeSdk.createTransaction(transaction);
       //const safeTxHash = await safeSdk.getTransactionHash(safeTransaction);
@@ -94,6 +99,7 @@ export default function SendEth({
         safeTransaction.data,
         chainId
       );
+      console.log("safeTxHash: ", safeTxHash);
       const senderSignature = await safeSdk.signTransactionHash(safeTxHash);
       const safeAddress = safeWalletAddress;
       const senderAddress = userAddress;

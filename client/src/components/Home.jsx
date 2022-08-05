@@ -13,7 +13,7 @@ function Home({ signer, address, isConnected }) {
     const userHaveSafe = async () => {
       const options = {
         params: {
-          userId: userId,
+          userAddress: address,
         },
       };
       return await axios
@@ -29,14 +29,14 @@ function Home({ signer, address, isConnected }) {
         });
     };
 
-    if (userId) {
+    if (address) {
       const checkUser = async () => {
         let rep = await userHaveSafe();
         SetSafes(rep);
       };
       checkUser();
     }
-  }, [userId]);
+  }, [address]);
 
   return (
     <>

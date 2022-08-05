@@ -17,7 +17,7 @@ const Form = ({ signer, address }) => {
   const [members, setMembers] = useState([{ name: "", address: address }]);
   const [loading, setLoading] = useState(false);
   let navigate = useNavigate();
-  const userId = localStorage.getItem("user_id");
+  //const userId = localStorage.getItem("user_id");
 
   useEffect(() => {
     if (signer) {
@@ -62,10 +62,10 @@ const Form = ({ signer, address }) => {
     setMembers(newMembersValues);
   };
 
-  const linkSafe = async (userId, safeId) => {
+  const linkSafe = async (_address, safeId) => {
     const options = {
       params: {
-        userId: userId,
+        userAddress: _address,
         safeId: safeId,
       },
     };
@@ -97,7 +97,10 @@ const Form = ({ signer, address }) => {
         threshold,
         name
       );
-      await linkSafe(userId, safe_id);
+      owners.map(async (element) => {
+        await linkSafe(element, safe_id);
+      });
+      //await linkSafe(userId, safe_id);
       navigate(`/safes/${newSafeAddress}`);
       setLoading(false);
       return newSafeAddress;

@@ -19,7 +19,7 @@ export default function PendingTxOpen({
 }) {
   function WaitingSignatures() {
     return (
-      <li>
+      <li key="wait">
         <div className="relative pb-8">
           <span
             className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
@@ -46,7 +46,7 @@ export default function PendingTxOpen({
 
   function Signed() {
     return (
-      <li>
+      <li key="signed">
         <div className="relative pb-8">
           <span
             className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
@@ -71,9 +71,9 @@ export default function PendingTxOpen({
     );
   }
 
-  function ValidatedSignatures({ signer }) {
+  function ValidatedSignatures({ signer, index }) {
     return (
-      <li>
+      <li key={index}>
         <div className="relative pb-8">
           <div className="relative flex space-x-3">
             <div>
@@ -108,13 +108,13 @@ export default function PendingTxOpen({
     const safeTransactionData = {
       to: pendingTx.to,
       value: pendingTx.value,
-      data: "0x0000000000000000000000000000000000000000",
-      operation: pendingTx.operation,
-      safeTxGas: pendingTx.safeTxGas,
-      baseGas: pendingTx.baseGas,
-      gasPrice: pendingTx.gasPrice,
-      gasToken: pendingTx.gasToken,
-      refundReceiver: pendingTx.refundReceiver,
+      data: pendingTx.data || "0x",
+      //operation: pendingTx.operation,
+      //safeTxGas: pendingTx.safeTxGas,
+      //baseGas: pendingTx.baseGas,
+      //gasPrice: pendingTx.gasPrice,
+      //gasToken: pendingTx.gasToken,
+      //refundReceiver: pendingTx.refundReceiver,
       nonce: pendingTx.nonce,
     };
     const safeTransaction = await safeSdk.createTransaction(
@@ -182,7 +182,7 @@ export default function PendingTxOpen({
         <div className="flex flex-col w-2/5 h-30 pl-5">
           <div className="flow-root py-4 sm:py-5">
             <ul className="-mb-8">
-              <li>
+              <li key="0">
                 <div className="relative pb-8">
                   <span
                     className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
