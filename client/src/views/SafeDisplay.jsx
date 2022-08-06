@@ -140,7 +140,7 @@ export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
       <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-10">
         <div className="flex mb-2 text-md text-gray-500 items-center">
           <ArrowLeftIcon className="h-4 w-4 mr-1" />{" "}
-          <Link to={"/"}>Go back to dashboard</Link>
+          <Link to={"/home"}>Go back to dashboard</Link>
         </div>
         {safeSdk && safeService && signer && (
           <CreateTransaction

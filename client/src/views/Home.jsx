@@ -7,6 +7,7 @@ import { useEffect } from "react";
 
 function Home({ signer, address, isConnected }) {
   const [safes, SetSafes] = useState();
+  const [firstTime, setFirstTime] = useState(true);
 
   useEffect(() => {
     const userHaveSafe = async () => {
@@ -20,6 +21,7 @@ function Home({ signer, address, isConnected }) {
         .then(function (response) {
           const { data } = response;
           if (data.length > 0) {
+            setFirstTime(false);
             return data;
           }
         })
@@ -42,11 +44,11 @@ function Home({ signer, address, isConnected }) {
       {isConnected ? (
         safes ? (
           <>
-            <Dashboard safes={safes} />
+            <Dashboard safes={safes} address={address} signer={signer} />
           </>
         ) : (
           <>
-            <Form signer={signer} address={address} />
+            <Form signer={signer} address={address} firstTime={firstTime} />
           </>
         )
       ) : (

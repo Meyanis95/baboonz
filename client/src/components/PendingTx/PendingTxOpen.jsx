@@ -17,6 +17,7 @@ export default function PendingTxOpen({
   safeSdk,
   safeService,
   isSigned,
+  setIsSigned,
   setIsExecuted,
   isExecuted,
 }) {
@@ -25,6 +26,7 @@ export default function PendingTxOpen({
     let signature = await safeSdk.signTransactionHash(hash);
     let result = await safeService.confirmTransaction(hash, signature.data);
     setHasAlreadySigned(true);
+    setIsSigned(true);
     console.log(result);
   };
 
@@ -179,7 +181,7 @@ export default function PendingTxOpen({
                       handleSigning();
                     }}
                   >
-                    Confirm
+                    Sign transaction
                   </button>
                 )}
               </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ethers } from "ethers";
 import EthersAdapter from "@gnosis.pm/safe-ethers-lib";
 import { SafeFactory } from "@gnosis.pm/safe-core-sdk";
@@ -8,10 +8,11 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon,
   XCircleIcon,
+  ArrowLeftIcon,
 } from "@heroicons/react/solid";
 import Loader from "./Loader";
 
-const Form = ({ signer, address }) => {
+const Form = ({ signer, address, firstTime }) => {
   const [ethAdapter, setEthAdapter] = useState(null);
   const [threshold, setThreshold] = useState();
   const [name, setName] = useState("");
@@ -180,6 +181,12 @@ const Form = ({ signer, address }) => {
               </div>
             </div>
             <div className="space-y-6 mt-10 mb-20">
+              {!firstTime && (
+                <div className="flex text-md text-gray-500 items-center">
+                  <ArrowLeftIcon className="h-4 w-4 mr-1" />{" "}
+                  <Link to={"/home"}>Go back to dashboard</Link>
+                </div>
+              )}
               <div className="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
                 <div className="md:grid md:grid-cols-3 md:gap-6">
                   <div className="md:col-span-1">

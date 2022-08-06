@@ -3,13 +3,34 @@ import axios from "axios";
 import Blockies from "react-blockies";
 import { Link } from "react-router-dom";
 import { PlusSmIcon } from "@heroicons/react/solid";
+import { ethers } from "ethers";
+import EthersAdapter from "@gnosis.pm/safe-ethers-lib";
+import SafeServiceClient from "@gnosis.pm/safe-service-client";
 
 export const myBlockies = (_seed) => (
   <Blockies seed={_seed} size={10} scale={3} />
 );
 
-export default function Dashboard({ safes }) {
+export default function Dashboard({ safes, address, signer }) {
   const [squads, setSquads] = useState([]);
+  // const [safeService, setSafeService] = useState();
+
+  // useEffect(() => {
+  //   if (signer) {
+  //     const setSafeClient = async () => {
+  //       const ethAdapter = new EthersAdapter({
+  //         ethers,
+  //         signer: signer,
+  //       });
+
+  //       const txServiceUrl = "https://safe-transaction.rinkeby.gnosis.io";
+  //       const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter });
+  //       setSafeService(safeService);
+  //     };
+
+  //     setSafeClient();
+  //   }
+  // }, [signer]);
 
   useEffect(() => {
     const getSquadInfos = async (squadId) => {
@@ -39,11 +60,6 @@ export default function Dashboard({ safes }) {
         }
         return;
       };
-      // safes.forEach(async (element) => {
-      //   const rep = await getSquadInfos(element.safe_id);
-      //   console.log("rep", rep);
-      //   setSquads((squads) => [...squads, rep]);
-      // });
       fetchAll();
     }
   }, [safes, squads]);

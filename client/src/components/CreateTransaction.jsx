@@ -76,7 +76,7 @@ export default function CreateTransaction({
     const transaction = {
       to: recipientAddress,
       value: ethAmount,
-      data: "0x0000000000000000000000000000000000000000",
+      data: "0x",
       nonce: nonce,
     };
     console.log(transaction);

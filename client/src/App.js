@@ -212,11 +212,11 @@ function App() {
             connectedNetwork = {connectedNetwork}
             logoutOfWeb3Modal = {logoutOfWeb3Modal}
             connectWallet = {connectWallet}/>}>
-        <Route index element={<Home  signer={signer} address={address} isConnected={isConnected}/>}/>
+        <Route index element={<Landing/>}/>
         <Route path="safes" element={<Safes />}>
           <Route path=":safeAddress" element={<SafeDisplay injectedProvider={injectedProvider} userAddress={address} signer={signer}/>} />
         </Route>
-        <Route path="/landing" element={<Landing />}/>
+        <Route path="/home" element={<Home  signer={signer} address={address} isConnected={isConnected}/>}/>
         <Route path="/form" element={<Form signer={signer} address={address}/>}/>
         </Route>
       </Routes>)
