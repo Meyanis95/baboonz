@@ -2,7 +2,6 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ethers } from "ethers";
 import axios from "axios";
-import { BeakerIcon } from "@heroicons/react/solid";
 
 export const EIP712_SAFE_TX_TYPE = {
   // "SafeTx(address to,uint256 value,bytes data,uint8 operation,uint256 safeTxGas,uint256 baseGas,uint256 gasPrice,address gasToken,address refundReceiver,uint256 nonce)"
@@ -20,7 +19,7 @@ export const EIP712_SAFE_TX_TYPE = {
   ],
 };
 
-export default function SendEth({
+export default function CreateTransaction({
   showSendEthModal,
   setShowSendEthModal,
   userAddress,

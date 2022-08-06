@@ -1,6 +1,8 @@
-import { PlusSmIcon, ClockIcon } from "@heroicons/react/outline";
-import { CheckIcon, PlusCircleIcon } from "@heroicons/react/solid";
+import { PlusSmIcon } from "@heroicons/react/outline";
 import { EthSignSignature } from "@gnosis.pm/safe-core-sdk";
+import WaitingSignatures from "./WaitingSignatures";
+import Signed from "./Signed";
+import ValidatedSignatures from "./ValidatedSignatures";
 
 export default function PendingTxOpen({
   ownersCount,
@@ -11,96 +13,18 @@ export default function PendingTxOpen({
   txHash,
   recipientAddress,
   hasAlreadySigned,
+  setHasAlreadySigned,
   safeSdk,
   safeService,
   isSigned,
   setIsExecuted,
   isExecuted,
 }) {
-  function WaitingSignatures() {
-    return (
-      <li key="wait">
-        <div className="relative pb-8">
-          <span
-            className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-            aria-hidden="true"
-          />
-          <div className="relative flex space-x-3">
-            <div>
-              <span className="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white bg-orange-400">
-                <ClockIcon className="h-5 w-5 text-white" aria-hidden="true" />
-              </span>
-            </div>
-            <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-              <div>
-                <p className="text-sm text-gray-500">
-                  Confirmations ({voteCount} of {ownersCount})
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </li>
-    );
-  }
-
-  function Signed() {
-    return (
-      <li key="signed">
-        <div className="relative pb-8">
-          <span
-            className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-            aria-hidden="true"
-          />
-          <div className="relative flex space-x-3">
-            <div>
-              <span className="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white bg-green-400">
-                <CheckIcon className="h-5 w-5 text-white" aria-hidden="true" />
-              </span>
-            </div>
-            <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-              <div>
-                <p className="text-sm text-gray-500">
-                  Signed ({voteCount} of {ownersCount})
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </li>
-    );
-  }
-
-  function ValidatedSignatures({ signer, index }) {
-    return (
-      <li key={index}>
-        <div className="relative pb-8">
-          <div className="relative flex space-x-3">
-            <div>
-              <span className="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white bg-white">
-                <PlusCircleIcon
-                  className="h-5 w-5 text-green-300"
-                  aria-hidden="true"
-                />
-              </span>
-            </div>
-            <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-              <div>
-                <p className="text-sm text-gray-500">
-                  {signer && signer.slice(0, 6) + "..." + signer.slice(-4)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </li>
-    );
-  }
-
   const handleSigning = async () => {
     const hash = pendingTx.safeTxHash;
     let signature = await safeSdk.signTransactionHash(hash);
     let result = await safeService.confirmTransaction(hash, signature.data);
+    setHasAlreadySigned(true);
     console.log(result);
   };
 
@@ -109,12 +33,12 @@ export default function PendingTxOpen({
       to: pendingTx.to,
       value: pendingTx.value,
       data: pendingTx.data || "0x",
-      //operation: pendingTx.operation,
-      //safeTxGas: pendingTx.safeTxGas,
-      //baseGas: pendingTx.baseGas,
-      //gasPrice: pendingTx.gasPrice,
-      //gasToken: pendingTx.gasToken,
-      //refundReceiver: pendingTx.refundReceiver,
+      operation: pendingTx.operation,
+      safeTxGas: pendingTx.safeTxGas,
+      baseGas: pendingTx.baseGas,
+      gasPrice: pendingTx.gasPrice,
+      gasToken: pendingTx.gasToken,
+      refundReceiver: pendingTx.refundReceiver,
       nonce: pendingTx.nonce,
     };
     const safeTransaction = await safeSdk.createTransaction(
@@ -207,7 +131,14 @@ export default function PendingTxOpen({
                   </div>
                 </div>
               </li>
-              {isSigned ? <Signed /> : <WaitingSignatures />}
+              {isSigned ? (
+                <Signed voteCount={voteCount} ownersCount={ownersCount} />
+              ) : (
+                <WaitingSignatures
+                  voteCount={voteCount}
+                  ownersCount={ownersCount}
+                />
+              )}
               {pendingTx?.confirmations.map((element, index) => (
                 <ValidatedSignatures signer={element.owner} index={index} />
               ))}

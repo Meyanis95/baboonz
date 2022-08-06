@@ -8,9 +8,9 @@ import { Link } from "react-router-dom";
 import EthersAdapter from "@gnosis.pm/safe-ethers-lib";
 import Safe from "@gnosis.pm/safe-core-sdk";
 import SafeServiceClient from "@gnosis.pm/safe-service-client";
-import PendingTx from "../components/PendingTx";
+import PendingTx from "../components/PendingTx/PendingTx";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
-import SendEth from "../components/SendEth";
+import CreateTransaction from "../components/CreateTransaction";
 
 export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
   const [safeWallet, setSafeWallet] = useState();
@@ -50,8 +50,8 @@ export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
 
   useEffect(() => {
     const getInfo = async () => {
-      const safe_info = await safeService.getSafeInfo(safeWalletAddress);
-      setNonce(safe_info.nonce);
+      const nonce = await safeService.getNextNonce(safeWalletAddress);
+      setNonce(nonce);
     };
 
     if (safeService && safeWalletAddress) {
@@ -71,7 +71,7 @@ export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
     if (safeService && safeWallet) {
       getPending();
     }
-  }, [safeService]);
+  }, [safeService, safeWallet, safeWalletAddress]);
 
   const fetchSafe = async (address) => {
     const options = {
@@ -143,7 +143,7 @@ export default function SafeDisplay({ injectedProvider, userAddress, signer }) {
           <Link to={"/"}>Go back to dashboard</Link>
         </div>
         {safeSdk && safeService && signer && (
-          <SendEth
+          <CreateTransaction
             showSendEthModal={showSendEthModal}
             setShowSendEthModal={setShowSendEthModal}
             contractBalanceInEth={contractBalanceInEth}

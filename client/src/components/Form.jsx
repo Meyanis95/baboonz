@@ -1,13 +1,14 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import EthersAdapter from "@gnosis.pm/safe-ethers-lib";
 import { SafeFactory } from "@gnosis.pm/safe-core-sdk";
 import axios from "axios";
-import { useEffect } from "react";
-import { XCircleIcon } from "@heroicons/react/solid";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/solid";
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  XCircleIcon,
+} from "@heroicons/react/solid";
 import Loader from "./Loader";
 
 const Form = ({ signer, address }) => {

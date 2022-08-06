@@ -1,5 +1,5 @@
 import './App.css';
-import Home from './components/Home';
+import Home from './views/Home';
 import Navbar from './components/Navbar';
 import SafeDisplay from './views/SafeDisplay';
 import Landing from './views/Landing'

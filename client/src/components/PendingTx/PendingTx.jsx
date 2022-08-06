@@ -1,7 +1,7 @@
 import { ArrowUpIcon } from "@heroicons/react/outline";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { timeSince } from "../helpers/timesince";
+import { timeSince } from "../../helpers/timesince";
 import { UsersIcon } from "@heroicons/react/outline";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/outline";
 import PendingTxOpen from "./PendingTxOpen";
@@ -49,13 +49,14 @@ export default function PendingTx({
         } else {
           setHasAlreadySigned(false);
         }
+        return pendingTx;
       });
 
       if (signaturesCount === numOwners) {
         setIsSigned(true);
       }
     }
-  }, [pendingTx]);
+  }, [pendingTx, numOwners, userAddress]);
 
   const handleOpen = () => {
     if (open === false) {
@@ -97,7 +98,6 @@ export default function PendingTx({
               Pending
             </h3>
           )}
-          <h3 className="flex items-center text-md leading-6 font-small text-slate-400"></h3>
         </div>
         <div className="ml-4 mt-2 flex-shrink-0">
           <button
@@ -125,6 +125,7 @@ export default function PendingTx({
           txHash={txHash}
           recipientAddress={recipientAddress}
           hasAlreadySigned={hasAlreadySigned}
+          setHasAlreadySigned={setHasAlreadySigned}
           safeSdk={safeSdk}
           safeService={safeService}
           isSigned={isSigned}

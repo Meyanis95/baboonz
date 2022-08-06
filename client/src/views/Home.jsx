@@ -1,12 +1,11 @@
 import { useState } from "react";
-import Form from "./Form";
-import NotConnected from "./NotConnected";
-import Dashboard from "./Dashboard";
+import Form from "../components/Form";
+import NotConnected from "../components/NotConnected";
+import Dashboard from "../components/Dashboard";
 import axios from "axios";
 import { useEffect } from "react";
 
 function Home({ signer, address, isConnected }) {
-  const userId = localStorage.getItem("user_id");
   const [safes, SetSafes] = useState();
 
   useEffect(() => {
