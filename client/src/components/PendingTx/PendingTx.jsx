@@ -129,6 +129,7 @@ export default function PendingTx({
           safeSdk={safeSdk}
           safeService={safeService}
           isSigned={isSigned}
+          setIsSigned={setIsSigned}
           setIsExecuted={setIsExecuted}
           isExecuted={isExecuted}
         />
