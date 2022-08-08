@@ -19,7 +19,7 @@ const CoinGeckoClient = new CoinGecko();
 const app = express();
 
 // Priority serve any static files.
-//app.use(express.static(path.resolve(__dirname, '../client/build')));
+app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 app
   .use(express.static(path.resolve(__dirname, '../client/build')))
@@ -32,7 +32,7 @@ app.get('/', function (req, res) {
 });
 
 // app.get('/*', function(req, res) {
-//   res.sendFile(path.resolve(__dirname, '../client/build/index.html'), function(err) {
+//   res.sendFile(path.join(__dirname, '../client/build/index.html'), function(err) {
 //     if (err) {
 //       res.status(500).send(err)
 //     }
@@ -205,6 +205,10 @@ app.get('/getEthPrice', async (req, res) => {
   }
 
 })
+
+app.get('*', function (request, response) {
+  response.sendFile(path.resolve(__dirname, '../client/public', 'index.html'));
+});
 
 app.listen(PORT, () => {
   console.log(`serveur démarré : https://localhost:${PORT}`)

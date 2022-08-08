@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:8888/",
-  "homepage": ".",
+  "homepage": "https://baboonz.herokuapp.com/",
   "engines": {
     "node": "16.x"
   },

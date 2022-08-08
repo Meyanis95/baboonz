@@ -4,9 +4,6 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
-      fontFamily: {
-      phosphate: ["Phosphate", "inline"]
-    },
     colors: {
       teal: colors.teal,
       cyan: colors.cyan,
