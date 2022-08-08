@@ -3,9 +3,9 @@ import axios from "axios";
 import Blockies from "react-blockies";
 import { Link } from "react-router-dom";
 import { PlusSmIcon } from "@heroicons/react/solid";
-import { ethers } from "ethers";
-import EthersAdapter from "@gnosis.pm/safe-ethers-lib";
-import SafeServiceClient from "@gnosis.pm/safe-service-client";
+// import { ethers } from "ethers";
+// import EthersAdapter from "@gnosis.pm/safe-ethers-lib";
+// import SafeServiceClient from "@gnosis.pm/safe-service-client";
 
 export const myBlockies = (_seed) => (
   <Blockies seed={_seed} size={10} scale={3} />
@@ -62,7 +62,7 @@ export default function Dashboard({ safes, address, signer }) {
       };
       fetchAll();
     }
-  }, [safes]);
+  }, [safes, squads]);
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-10">

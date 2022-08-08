@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "build your squad around a treasury",
   "main": "server/index.js",
+  "homepage": ".",
   "engines": {
     "node": "16.x"
   },
