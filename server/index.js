@@ -207,7 +207,7 @@ app.get('/getEthPrice', async (req, res) => {
 })
 
 app.get('*', function (request, response) {
-  response.sendFile(path.resolve(__dirname, '../client/public', 'index.html'));
+  response.sendFile(path.resolve(__dirname, '../client/build'));
 });
 
 app.listen(PORT, () => {
