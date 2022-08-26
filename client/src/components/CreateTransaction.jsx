@@ -42,7 +42,7 @@ export default function CreateTransaction({
   useEffect(() => {
     const fetchEthPrice = async () => {
       return await axios
-        .get(`/getEthPrice`)
+        .get("/getEthPrice")
         .then(function (response) {
           const { ethereum } = response.data.data;
 

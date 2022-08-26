@@ -40,7 +40,7 @@ export default function Dashboard({ safes, address, signer }) {
         },
       };
       return await axios
-        .get(`/getSafeById`, options)
+        .get("/getSafeById", options)
         .then(function (response) {
           const { data } = response;
           if (data) {
@@ -101,7 +101,7 @@ export default function Dashboard({ safes, address, signer }) {
             </li>
           ))}
         <li className="col-span-1 items-center content-center bg-white rounded-lg shadow divide-y divide-gray-200 hover:shadow-md">
-          <Link to={`/form`}>
+          <Link to={"/form"}>
             <div className="w-full h-full flex items-center justify-between p-6 space-x-6">
               <div className="flex items-center space-x-3">
                 <PlusSmIcon

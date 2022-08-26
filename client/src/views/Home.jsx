@@ -1,9 +1,8 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState, propTypes } from "react";
 import Form from "../components/Form";
 import NotConnected from "../components/NotConnected";
 import Dashboard from "../components/Dashboard";
-import axios from "axios";
-import { useEffect } from "react";
 
 function Home({ signer, address, isConnected }) {
   const [safes, SetSafes] = useState();
@@ -16,23 +15,23 @@ function Home({ signer, address, isConnected }) {
           userAddress: address,
         },
       };
-      return await axios
-        .get(`/checkSafe`, options)
-        .then(function (response) {
+      return axios
+        .get("/checkSafe", options)
+        .then((response) => {
           const { data } = response;
           if (data.length > 0) {
             setFirstTime(false);
             return data;
           }
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log("erreur", error);
         });
     };
 
     if (address) {
       const checkUser = async () => {
-        let rep = await userHaveSafe();
+        const rep = await userHaveSafe();
         SetSafes(rep);
       };
       checkUser();
@@ -43,13 +42,9 @@ function Home({ signer, address, isConnected }) {
     <>
       {isConnected ? (
         safes ? (
-          <>
-            <Dashboard safes={safes} address={address} signer={signer} />
-          </>
+          <Dashboard safes={safes} address={address} signer={signer} />
         ) : (
-          <>
-            <Form signer={signer} address={address} firstTime={firstTime} />
-          </>
+          <Form signer={signer} address={address} firstTime={firstTime} />
         )
       ) : (
         <NotConnected />

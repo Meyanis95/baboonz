@@ -1,8 +1,8 @@
 import { PlusCircleIcon } from "@heroicons/react/solid";
 
-export default function ValidatedSignatures({ signer, index }) {
+export default function ValidatedSignatures({ signer, key }) {
   return (
-    <li key={index}>
+    <li key={key}>
       <div className="relative pb-8">
         <div className="relative flex space-x-3">
           <div>

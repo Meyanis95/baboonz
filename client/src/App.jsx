@@ -1,18 +1,17 @@
-import './App.css';
-import Home from './views/Home';
-import Navbar from './components/Navbar';
-import SafeDisplay from './views/SafeDisplay';
-import Landing from './views/Landing'
-import Safes from './views/Safes';
-import Form from './components/Form';
-import { useEffect, useState } from 'react';
+import "./App.css";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { createClient } from "@supabase/supabase-js";
-import { Route, Routes } from 'react-router-dom';
-
+import { Route, Routes } from "react-router-dom";
+import Form from "./components/Form";
+import Safes from "./views/Safes";
+import Landing from "./views/Landing";
+import SafeDisplay from "./views/SafeDisplay";
+import Navbar from "./components/Navbar";
+import Home from "./views/Home";
 
 const INFURA_ID = "460f40a260564ac4a4f4b3fffb032dad";
 
@@ -67,31 +66,30 @@ function App() {
 
     const network = await provider.getNetwork();
     setConnectedNetwork(network.name);
-    const _address = await signer.getAddress();
-    console.log("Connected user address => ", _address);
-    setAddress(_address);
+    const address = await signer.getAddress();
+    setAddress(address);
     if (!localStorage.getItem("user_id")) {
-      await signIn(_address, signer);
+      await signIn(address, signer);
     }
-    setIsConnected(true)
+    setIsConnected(true);
   }
 
   useEffect(() => {
     if (injectedProvider) {
       const changeNetwork = async () => {
         const network = await injectedProvider.getNetwork();
-        setConnectedNetwork(network.name);  
-      }
+        setConnectedNetwork(network.name);
+      };
       // const changeAddress = async () => {
       //   const signer = await injectedProvider.getSigner();
       //   const address = await signer.getAddress();
-      //   setAddress(address) 
+      //   setAddress(address)
       //   refreshId(address)
       // }
       changeNetwork();
-      //changeAddress();
+      // changeAddress();
     }
-  }, [injectedProvider])
+  }, [injectedProvider]);
 
   const addListeners = (provider) => {
     provider.on("chainChanged", (chainId) => {
@@ -100,7 +98,7 @@ function App() {
     });
 
     provider.on("accountsChanged", () => {
-      console.log(`account changed!`);
+      console.log("account changed!");
       setInjectedProvider(new ethers.providers.Web3Provider(provider));
       localStorage.removeItem("user_id");
       window.location.reload();
@@ -112,35 +110,9 @@ function App() {
       logoutOfWeb3Modal();
       localStorage.removeItem("supa_token");
       localStorage.removeItem("user_id");
-      setIsConnected(false)
+      setIsConnected(false);
     });
   };
-
-  // const checkUser = async () => {
-  //   const { data } = await supabase.from("users").select();
-  //   console.log(data);
-  // };
-
-  //This function is not necessary for the moment as we reload the dom when the user is changing account
-  // const refreshId = async (_address) => {
-  //   const options = {
-  //     params: { data: _address },
-  //   };
-  //   localStorage.removeItem('user_id')
-
-  //   const { id } = await axios
-  //     .get(`/signup`, options)
-  //     .then(async function (response) {
-  //       const { id } = response.data;
-  //       return { id };
-  //     })
-  //     .catch(function (error) {
-  //       console.log("erreur", error);
-  //     });
-
-  //   localStorage.setItem('user_id', id)
-  //   console.log("account changed, user id => ", id)
-  // }
 
   const signIn = async (address, signer) => {
     console.log("Verifying your account, with the following addres:", address);
@@ -149,33 +121,27 @@ function App() {
     };
 
     const { nonce, id } = await axios
-      .get(`/signup`, options)
-      .then(async function (response) {
+      .get("/signup", options)
+      .then(async (response) => {
         const { nonce, id } = response.data;
         return { nonce, id };
       })
-      .catch(function (error) {
+      .catch((error) => {
         console.log("erreur", error);
       });
 
-    console.log("Sign the message with the nonce ...");
     const signature = await signer.signMessage(nonce);
-    console.log("Here it`s the signature", signature);
-    localStorage.setItem('user_id', id)
+    localStorage.setItem("user_id", id);
 
     const optionsverify = {
-      params: { eth_address: address, signature: signature, nonce: nonce },
+      params: { eth_address: address, signature, nonce },
     };
-    const { user, token } = await axios
-      .get(`/verify`, optionsverify)
-      .then(function (response) {
-        return response.data;
-      })
-      .catch(function (error) {
+    const { token } = await axios
+      .get("/verify", optionsverify)
+      .then((response) => response.data)
+      .catch((error) => {
         console.log("erreur", error);
       });
-    console.log(user);
-    console.log("Loging completed!!!");
 
     await supabase.auth.setAuth(token);
     localStorage.setItem("supa_token", token);
@@ -186,7 +152,7 @@ function App() {
     if (
       injectedProvider &&
       injectedProvider.provider &&
-      typeof injectedProvider.provider.disconnect == "function"
+      typeof injectedProvider.provider.disconnect === "function"
     ) {
       await injectedProvider.provider.disconnect();
     }
@@ -204,22 +170,46 @@ function App() {
     }
   }, [web3Modal]);
 
-
   return (
-      <Routes>
-        <Route path="/" element={<Navbar web3Modal = {web3Modal}
-            address = {address}
-            connectedNetwork = {connectedNetwork}
-            logoutOfWeb3Modal = {logoutOfWeb3Modal}
-            connectWallet = {connectWallet}/>}>
-        <Route index element={<Landing/>}/>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <Navbar
+            web3Modal={web3Modal}
+            address={address}
+            connectedNetwork={connectedNetwork}
+            logoutOfWeb3Modal={logoutOfWeb3Modal}
+            connectWallet={connectWallet}
+          />
+        }
+      >
+        <Route index element={<Landing />} />
         <Route path="safes" element={<Safes />}>
-          <Route path=":safeAddress" element={<SafeDisplay injectedProvider={injectedProvider} userAddress={address} signer={signer}/>} />
+          <Route
+            path=":safeAddress"
+            element={
+              <SafeDisplay
+                injectedProvider={injectedProvider}
+                userAddress={address}
+                signer={signer}
+              />
+            }
+          />
         </Route>
-        <Route path="/home" element={<Home  signer={signer} address={address} isConnected={isConnected}/>}/>
-        <Route path="/form" element={<Form signer={signer} address={address}/>}/>
-        </Route>
-      </Routes>)
+        <Route
+          path="/home"
+          element={
+            <Home signer={signer} address={address} isConnected={isConnected} />
+          }
+        />
+        <Route
+          path="/form"
+          element={<Form signer={signer} address={address} />}
+        />
+      </Route>
+    </Routes>
+  );
 }
 
 export default App;

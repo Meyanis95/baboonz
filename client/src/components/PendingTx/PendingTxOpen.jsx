@@ -142,7 +142,7 @@ export default function PendingTxOpen({
                 />
               )}
               {pendingTx?.confirmations.map((element, index) => (
-                <ValidatedSignatures signer={element.owner} index={index} />
+                <ValidatedSignatures signer={element.owner} key={index} />
               ))}
             </ul>
           </div>

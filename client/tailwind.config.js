@@ -1,17 +1,20 @@
+/* eslint-disable no-undef */
+
 /** @type {import('tailwindcss').Config} */
-const colors = require('tailwindcss/colors')
+const colors = require("tailwindcss/colors");
+
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
-    colors: {
-      teal: colors.teal,
-      cyan: colors.cyan,
+      colors: {
+        teal: colors.teal,
+        cyan: colors.cyan,
+      },
     },
   },
-},
   plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio')
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/aspect-ratio"),
   ],
-}
+};

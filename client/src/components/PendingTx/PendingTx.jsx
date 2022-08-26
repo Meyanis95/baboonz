@@ -1,9 +1,12 @@
-import { ArrowUpIcon } from "@heroicons/react/outline";
+import {
+  ArrowUpIcon,
+  UsersIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from "@heroicons/react/outline";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { timeSince } from "../../helpers/timesince";
-import { UsersIcon } from "@heroicons/react/outline";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/outline";
 import PendingTxOpen from "./PendingTxOpen";
 
 export default function PendingTx({
